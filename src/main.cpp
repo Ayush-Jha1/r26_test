@@ -2,10 +2,14 @@
 #include "odometry.h"
 #include "planning.h"
 #include "ublox_reader.h"
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <fstream>
 #include <iostream>
 #include <string>
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 using namespace std;
 

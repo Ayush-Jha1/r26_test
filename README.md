@@ -52,15 +52,45 @@ If you are able to compile your code successfully you should see something like 
 
 # Solution
 ## Understanding
-Describe what you understood about the problem.
+The problem was to develop a complete rover navigation system that involves three main components:
+1. GPS Data Decoding
+2. Path Planning
+3. Odometry Command Generation
+so,it handled real gps coordinates,convert them to grid coordinates, plan around obstacles, and generate practical movement commands for a physical rover.
 
 ## Thought Process
-After understanding the problem, describe how you decided to proceed towards solving the question.
+I approached this systematically by breaking down the problem into small tasks:
+
+First, fix the GPS decoding: I analyzed the UBX message format and identified that the buffer offset errors in the NAV_POSLLH function were causing incorrect latitude/longitude extraction. The original code was reading from the same buffer position for both longitude and latitude.
+
+Then implement path planning: I chose the A* algorithm because it's optimal for grid-based pathfinding and finds the shortest path while being computationally efficient. I considered both 4-directional and 8-directional movement, choosing 8-directional for more robot movement.
+
+Finally, calculate odometry: I analyzed what motion commands meant in the context of rover navigation - the total time represents linear movement duration, and the total angle represents total rotations needed.
+
+Ensure compatibility: I set up the Windows build environment with MinGW since the original makefile was designed for Unix-like systems.
 
 ## Implementation
 How did you decide to implement your solution.
-
-Mention the details, such as the path planning & odometry how you tested it.
+GPS Decoding (ublox_reader.cpp)
+Issue: Buffer offsets in NAV_POSLLH were incorrect - longitude and latitude were both reading from the same memory position
+Solution: Fixed memory offsets to read longitude from buffer + 4 and latitude from buffer + 8 according to UBX NAV-POSLLH message format
+Path Planning (planning.cpp)
+Algorithm Choice: Implemented A* pathfinding algorithm for optimal route finding
+Implementation Details:
+Used g-cost (actual distance from start) and f-cost
+Implemented 8-directional movement with higher cost for diagonal moves (√2 vs 1.0)
+Used Euclidean distance
+Odometry Commands (odometry.cpp)
+Time Calculation:
+Calculated segment distances using Euclidean distance formula
+Converted distance to time using: time = distance / velocity
+Linear velocity derived from wheel parameters: v = 2πr × (rpm/60)
+Angle Calculation:
+Calculated absolute angle for each path segment using atan2()
+Summed all segment angles to get total rotation
+Converted from radians to degrees
+ ## Places Where I Got Stuck & Used Resources
+ I used 
 
 # Google Form
 [Link to Repo Submission](https://docs.google.com/forms/d/e/1FAIpQLSdlVJ2LzP8wUOATRD804zDVL611rwwGMO1y_ecYu5aoV5YQfw/viewform)
